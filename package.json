@@ -1,0 +1,35 @@
+{
+  "name": "analyticsserver",
+  "version": "1.0.0",
+  "description": "Analytics Server for storing the eventlog in AWS S3",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --trace-warnings build/main.js",
+    "prepare": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WorldBrain/AnalyticsAPIs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WorldBrain/AnalyticsAPIs/issues"
+  },
+  "homepage": "https://github.com/WorldBrain/AnalyticsAPIs#readme",
+  "dependencies": {
+    "aws-sdk": "^2.249.1",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "http-proxy": "^1.17.0",
+    "source-map-support": "^0.5.6",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/buffers": "^0.1.31",
+    "ts-node": "^6.0.5",
+    "typescript": "^2.8.4"
+  }
+}
