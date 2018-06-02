@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/WorldBrain/AnalyticsAPIs#readme",
   "dependencies": {
+    "@types/uuid": "^3.4.3",
     "aws-sdk": "^2.249.1",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",

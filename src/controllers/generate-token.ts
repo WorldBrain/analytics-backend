@@ -1,5 +1,13 @@
-export function generateToken() {
-    return async function handleGeneateTokenRequest() {
-        
+import { AppComponents } from '../components'
+import { TokenGenerator } from '../components/token-generator'
+
+export function generateToken(
+    {tokenGenerator}:
+    {tokenGenerator: TokenGenerator}
+) {
+    return async function handleGenerateTokenRequest() {
+        const id = tokenGenerator.generateToken()
+        console.log(id)
+        return {id}
     }
 }

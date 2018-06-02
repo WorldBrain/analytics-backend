@@ -1,8 +1,14 @@
 import { ExpressReqRes } from '../'
+import { AppControllers } from '../../controllers'
 
-export function eventLog() {
-    console.log('Here in the generate token')
+export function eventLog(appControllers: AppControllers) {
     return async function handleEventlogPutRequest({req, res} : ExpressReqRes) {
+        const data = _extractDataFromPostRequest(req)
+        
         res.json({id: 'test'})
       }
+}
+
+export function _extractDataFromPostRequest(req) : string {
+    return req.body.request
 }

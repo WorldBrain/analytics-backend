@@ -12,7 +12,7 @@ export interface AppRoutes {
 
 export function createAppRoutes(appControllers: AppControllers) : AppRoutes {
   return {
-    generateToken: generateToken.generateToken(),
-    eventLog: eventLog.eventLog()
+    generateToken: generateToken.generateToken(appControllers),
+    eventLog: eventLog.eventLog(appControllers)
   }
 }

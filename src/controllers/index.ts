@@ -9,7 +9,7 @@ export interface AppControllers {
 
 export function createAppControllers(appComponents : AppComponents) : AppControllers {
     return {
-        generateToken: generateToken.generateToken(),
+        generateToken: generateToken.generateToken(appComponents),
         eventLog: eventLog.eventLog()
     }
 }

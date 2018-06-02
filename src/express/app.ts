@@ -15,12 +15,13 @@ export default function createApp(
 
 	const app = express()
 	app.use(bodyParser.json())
+	app.use(bodyParser.urlencoded({ extended: true }));
 	
 	app.get('/', function(req, res) {
-		res.send('Hello')
+		res.send('Hello, welcome to worldbrains analytics. The work is in progress.')
 	})
 
-	app.get('/generateToken', route(routes.generateToken))
+	app.post('/generateToken', route(routes.generateToken))
 	app.post('/eventlog', route(routes.eventLog))
 	return app
 }
