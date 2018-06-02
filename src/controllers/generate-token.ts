@@ -7,7 +7,6 @@ export function generateToken(
 ) {
     return async function handleGenerateTokenRequest() {
         const id = tokenGenerator.generateToken()
-        console.log(id)
         return {id}
     }
 }

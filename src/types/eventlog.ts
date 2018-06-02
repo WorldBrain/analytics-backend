@@ -1,4 +1,4 @@
-export interface eventlog {
+export interface EventLog {
 	id: string
 	time: Date
 	data?: string
