@@ -17,7 +17,7 @@ export class UserMemoryStorage implements UserStorage {
 }
 
 export class EventLogMemoryStorage implements EventLogStorage {
-    async storeEvents({eventlog}, {eventlog: EventLog}) {
+    async storeEvents(events: any) {
         
     }
 }

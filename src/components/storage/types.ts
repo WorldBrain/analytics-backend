@@ -8,5 +8,5 @@ export interface UserStorage {
 }
 
 export interface EventLogStorage {
-    storeEvents({eventlog}, {eventlog: EventLog}): Promise<void>
+    storeEvents(events: any): Promise<void>
 }

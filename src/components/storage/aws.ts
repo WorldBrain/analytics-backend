@@ -115,16 +115,19 @@ export class AwsEventLogStorage implements EventLogStorage {
         this.bucketName = bucketName
     }
 
-    async storeEvents({eventlog}, {eventlog: EventLog}) {
+    async storeEvents(events: any) {
         const key = 'events/events.csv'
 
-        const events = await this._getObject({key, type: 'csv'})
-        events.push(eventlog)
+        const allEvent = await this._getObject({key, type: 'csv'})
+
+        events.data.forEach((event) => {
+            allEvent.push([event.time, events.id, event.other, event.type])
+        })
 
         let body;
 
         await new Promise((resolve, reject) => {
-            stringify(events, function(err, output){
+            stringify(allEvent, function(err, output){
                 body = output;
                 resolve(output)
             });

@@ -2,10 +2,12 @@ import { ExpressReqRes } from '../'
 import { AppControllers } from '../../controllers'
 
 export function eventLog(appControllers: AppControllers) {
-    return async function handleEventlogPutRequest({req, res} : ExpressReqRes) {
-        const data = _extractDataFromPostRequest(req)
+    return async function handleEventlogPutRequest({req, res} : ExpressReqRes) {        
+        const event = _extractDataFromPostRequest(req) 
+
+        const result = await appControllers.eventLog({event})
         
-        res.json({id: 'test', data: data})
+        res.json({id: result.success})
       }
 }
 
