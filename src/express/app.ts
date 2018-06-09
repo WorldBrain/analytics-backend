@@ -30,7 +30,7 @@ export default function createApp(
 		res.send('Hello, welcome to worldbrains analytics. The work is in progress.')
 	})
 
-	app.post('/generateToken', route(routes.generateToken))
-	app.post('/eventlog', route(routes.eventLog))
+	app.post('/user-token', route(routes.generateToken))
+	app.post('/event', route(routes.eventLog))
 	return app
 }

@@ -1,4 +1,4 @@
 export interface User {
 	id: string
-	install_time: Date
+	install_time: number
 }
