@@ -32,5 +32,7 @@ export default function createApp(
 
 	app.post('/user-token', route(routes.generateToken))
 	app.post('/event', route(routes.eventLog))
+	app.get('/uninstall', route(routes.uninstall))
+	
 	return app
 }
