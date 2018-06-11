@@ -4,7 +4,6 @@ export async function createHttpServer(app) {
     const server = http.createServer(app)
     await new Promise((resolve, reject) => {
       server.listen(parseInt(process.env.PORT) || 3000, (err) => {
-        console.log('Server started with ' + process.env.PORT)
         if (err) { return reject(err) }
         resolve(server)
       })
