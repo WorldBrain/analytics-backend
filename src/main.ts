@@ -21,9 +21,9 @@ async function main(config = null) : Promise<any> {
     const routes = createAppRoutes(controllers)
 
     const app = createApp({routes})
-    const server = await createHttpServer(app)
+    // const server = await createHttpServer(app)
     
-    console.log('Server started  :)')
+    // console.log('Server started  :)')
     expressapp = app
     return app
 }

@@ -56,10 +56,8 @@ export class AwsUserStorage implements UserStorage {
         return true;
     }
 
-    async _putObject({key, body, type, mime} : {key : string, body, type? : 'html' | 'csv' | 'buffer', mime? : string}) {
+    async _putObject({key, body, type, mime} : {key : string, body, type? : 'csv', mime? : string}) {
         const contentType = mime || {
-            json: 'application/json',
-            html: 'text/html',
             csv: 'text/csv',
             'image-png': 'image/png',
             'image-jpg': 'image/jpeg'
@@ -136,10 +134,8 @@ export class AwsEventLogStorage implements EventLogStorage {
         await this._putObject({key, body, type: 'csv'})
     }
 
-    async _putObject({key, body, type, mime} : {key : string, body, type? : 'html' | 'csv' | 'buffer', mime? : string}) {
+    async _putObject({key, body, type, mime} : {key : string, body, type? : 'csv', mime? : string}) {
         const contentType = mime || {
-            json: 'application/json',
-            html: 'text/html',
             csv: 'text/csv',
             'image-png': 'image/png',
             'image-jpg': 'image/jpeg'
