@@ -7,9 +7,9 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       DefinitionUri: ./simple-proxy-api.yaml
-      StageName: prod
+      StageName: YOUR_AWS_STAGE
       Variables:
-        ServerlessExpressLambdaFunctionName: !Ref AwsServerlessExpressFunction
+        ServerlessExpressLambdaFunctionName: !Ref YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -38,7 +38,7 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !GetAtt AwsServerlessExpressFunction.Arn
+      FunctionName: !GetAtt YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME.Arn
       Principal: apigateway.amazonaws.com
       SourceArn: !Join
         - ''
@@ -50,7 +50,7 @@ Resources:
           - !Ref ApiGatewayApi
           - "/*/*"
 
-  AwsServerlessExpressFunction:
+  YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./
@@ -83,7 +83,7 @@ Outputs:
         - ".console.aws.amazon.com/lambda/home?region="
         - !Ref AWS::Region
         - "#/functions/"
-        - !Ref AwsServerlessExpressFunction
+        - !Ref YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME
 
   ApiGatewayApiConsoleUrl:
     Description: Console URL for the API Gateway API's Stage.
@@ -95,7 +95,7 @@ Outputs:
         - !Ref AWS::Region
         - "#/apis/"
         - !Ref ApiGatewayApi
-        - "/stages/prod"
+        - "/stages/YOUR_AWS_STAGE"
 
   ApiUrl:
     Description: Invoke URL for your API. Clicking this link will perform a GET request
@@ -106,4 +106,4 @@ Outputs:
         - !Ref ApiGatewayApi
         - ".execute-api."
         - !Ref AWS::Region
-        - ".amazonaws.com/prod/"
+        - ".amazonaws.com/YOUR_AWS_STAGE/"

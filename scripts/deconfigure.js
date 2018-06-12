@@ -5,7 +5,7 @@ const modifyFiles = require('./utils').modifyFiles
 const packageJson = require('../package.json')
 const config = packageJson.config
 
-modifyFiles(['./simple-proxy-api.yaml', './package.json', './cloudformation.yaml'], [{
+modifyFiles(['./simple-proxy-api.yaml', './package.json', './cloudformation.yaml', '.env'], [{
     regexp: new RegExp(config.accountId, 'g'),
     replacement: 'YOUR_ACCOUNT_ID'
 }, {
@@ -17,4 +17,10 @@ modifyFiles(['./simple-proxy-api.yaml', './package.json', './cloudformation.yaml
 }, {
     regexp: new RegExp(config.functionName, 'g'),
     replacement: 'YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME'
+}, {
+    regexp: new RegExp(config.stageName, 'g'),
+    replacement: 'YOUR_AWS_STAGE'
+}, {
+    regexp: new RegExp(config.cloudFormationStackName, 'g'),
+    replacement: 'YOUR_AWS_STACK_NAME'
 }])

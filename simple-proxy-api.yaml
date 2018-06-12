@@ -2,7 +2,7 @@
 swagger: 2.0
 info:
   title: AwsServerlessExpressApi
-basePath: /prod
+basePath: /YOUR_AWS_STAGE
 schemes:
 - https
 paths:

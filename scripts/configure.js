@@ -17,11 +17,14 @@ const args = require('minimist')(process.argv.slice(2), {
         'account-id',
         'bucket-name',
         'function-name',
-        'region'
+        'region',
+        'stage-name',
+        'stack-name'
     ],
     default: {
         region: 'us-east-1',
-        'function-name': 'AwsServerlessExpressFunction'
+        'function-name': 'AwsServerlessExpressFunction',
+        'stack-name': 'AwsServerlessExpressStack',
     }
 })
 
@@ -32,6 +35,8 @@ if (minimistHasBeenInstalled) {
 const accountId = args['account-id']
 const bucketName = args['bucket-name']
 const functionName = args['function-name']
+const stageName = args['stage']
+const cloudFormationStackName = args['stack-name']
 const region = args.region
 const availableRegions = ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-west-1', 'eu-west-2', 'eu-central-1', 'ap-northeast-1', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2', 'ca-central-1']
 
@@ -50,7 +55,7 @@ if (availableRegions.indexOf(region) === -1) {
     return
 }
 
-modifyFiles(['./simple-proxy-api.yaml', './package.json', './cloudformation.yaml'], [{
+modifyFiles(['./simple-proxy-api.yaml', './package.json', './cloudformation.yaml', '.env'], [{
     regexp: /YOUR_ACCOUNT_ID/g,
     replacement: accountId
 }, {
@@ -62,4 +67,10 @@ modifyFiles(['./simple-proxy-api.yaml', './package.json', './cloudformation.yaml
 }, {
     regexp: /YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME/g,
     replacement: functionName
+}, {
+    regexp: /YOUR_AWS_STAGE/g,
+    replacement: stageName
+}, {
+    regexp: /YOUR_AWS_STACK_NAME/g,
+    replacement: cloudFormationStackName
 }])
