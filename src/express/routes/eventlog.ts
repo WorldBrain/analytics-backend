@@ -11,6 +11,6 @@ export function eventLog(appControllers: AppControllers) {
       }
 }
 
-export function _extractDataFromPostRequest(req) : string {
+function _extractDataFromPostRequest(req) : string {
     return req.body
 }

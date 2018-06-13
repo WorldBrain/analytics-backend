@@ -11,8 +11,8 @@ describe('User token generate and save in memory', () => {
         }
 
         const controller = controllers.generateToken({
-            TokenGenerator: new TokenGenerator(),
-            AwsUserStorage: new UserMemoryStorage()
+            tokenGenerator: new TokenGenerator(),
+            userStorage: new UserMemoryStorage()
         })
 
         const result = await controller({installTime: dummyUser.installTime})

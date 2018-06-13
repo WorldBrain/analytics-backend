@@ -9,6 +9,6 @@ export function generateToken(appControllers: AppControllers) {
       }
 }
 
-export function _extractInstallTimeFromRequest(req) : string {
-    return req.body.install_time
+function _extractInstallTimeFromRequest(req) : string {
+    return req.body.installTime
 }

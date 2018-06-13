@@ -1,11 +1,12 @@
+import * as path from 'path'
 import { TokenGenerator } from './token-generator'
 import { AwsUserStorage, AwsEventLogStorage } from './storage'
-import { UserStorage, EventLogStorage } from './storage'
+import { UserStorage, EventLogStorage, UserDiskStorage, EventDiskStorage } from './storage'
 
 export interface AppComponents {
-    TokenGenerator: TokenGenerator,
-    AwsUserStorage: UserStorage,
-    AwsEventLogStorage: EventLogStorage
+    tokenGenerator: TokenGenerator,
+    userStorage: UserStorage,
+    eventLogStorage: EventLogStorage
 }
 export interface AppComponentsConfig {
     baseUrl : string
@@ -21,8 +22,24 @@ export function createAppComponents(config: AppComponentsConfig): AppComponents 
     
     
     return {
-        TokenGenerator: allowOverride('tokenGenerator', () => new TokenGenerator()),
-        AwsUserStorage: allowOverride('awsUserStorage', () => new AwsUserStorage({bucketName: config.awsBucket})),
-        AwsEventLogStorage: allowOverride('AwsEventLogStorage', () => new AwsEventLogStorage({bucketName: config.awsBucket})),
+        tokenGenerator: allowOverride('tokenGenerator', () => new TokenGenerator()),
+        userStorage: allowOverride('userStorage', () => {
+            if(config.awsBucket) {
+                return new AwsUserStorage({bucketName: config.awsBucket})
+            } else {
+                return new UserDiskStorage({
+                    basePath: path.join(__dirname, '../../public')
+                })
+            }
+        }),
+        eventLogStorage: allowOverride('eventLogStorage', () => {
+            if(config.awsBucket) {
+                return new AwsEventLogStorage({bucketName: config.awsBucket})
+            } else {
+                return new EventDiskStorage({
+                    basePath: path.join(__dirname, '../../public')
+                })
+            }
+        }),
     }
 }

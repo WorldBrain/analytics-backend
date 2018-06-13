@@ -3,7 +3,7 @@ import { AppControllers } from '../../controllers'
 
 export function uninstall(appControllers: AppControllers) {
     return async function handleUninstallRequest({req, res} : ExpressReqRes) {
-        const unInstallTime = _extractUninstallFromRequest(req)
+        const uninstallTime = _extractUninstallFromRequest(req)
         const id = _extractIdFromRequest(req)
 
         const event = {
@@ -11,7 +11,7 @@ export function uninstall(appControllers: AppControllers) {
             data: [{
                 type: 'uninstall',
                 other: [],
-                time: unInstallTime
+                time: uninstallTime
             }]
         }
 
@@ -20,10 +20,10 @@ export function uninstall(appControllers: AppControllers) {
       }
 }
 
-export function _extractUninstallFromRequest(req) : string {
-    return req.param('uninstall_time')
+function _extractUninstallFromRequest(req) : string {
+    return req.param('uninstallTime')
 }
 
-export function _extractIdFromRequest(req) : string {
-    return req.param('id')
+function _extractIdFromRequest(req) : string {
+    return req.param('user')
 }

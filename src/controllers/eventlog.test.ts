@@ -22,7 +22,7 @@ describe('Save events in memory', () => {
         }
 
         const controller = controllers.eventLog({
-            AwsEventLogStorage: new EventLogMemoryStorage()
+            eventLogStorage: new EventLogMemoryStorage()
         })
 
         await controller({event: dummyEvent})

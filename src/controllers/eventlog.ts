@@ -3,11 +3,11 @@ import { TokenGenerator } from '../components/token-generator'
 import { EventLogStorage } from '../components/storage/types'
 
 export function eventLog(
-    {AwsEventLogStorage}:
-    {AwsEventLogStorage: EventLogStorage}
+    {eventLogStorage}:
+    {eventLogStorage: EventLogStorage}
 ) {
     return async function handleEventlogPutRequest({event}) {
-        await AwsEventLogStorage.storeEvents(event)
+        await eventLogStorage.storeEvents(event)
 
         // Todo for other messages
         return {"success": true}
