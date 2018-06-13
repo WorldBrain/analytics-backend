@@ -17,16 +17,16 @@ Install the [aws-cli](https://docs.aws.amazon.com/cli/latest/userguide/installin
 
 Configure with AWS account
 ```sh
-$ npm run config -- --account-id="12_DIGIT_ACCOUNT_ID" --bucket-name="UNIQUE_BUCKET_NAME" --function-name="LAMBDA _FUNCTION_NAME" --region="REGION" --stage="YOUR_STAGE_NAME" --stack-name="YOUR_AWS_STACK_NAME"
+$ npm run config -- --account-id="12_DIGIT_ACCOUNT_ID" --bucket-name="UNIQUE_BUCKET_NAME" --function-name="LAMBDA_FUNCTION_NAME" --region="REGION" --stage="YOUR_STAGE_NAME" --stack-name="YOUR_AWS_STACK_NAME"
 ```
 
 For example
 ```sh
-$ npm run config -- --account-id="12_DIGIT_ACCOUNT_ID" --bucket-name="staging.analytics.worldbrain.io" --function-name="stagingAWSAnalytics" --stage="staging" --stack-name="StagingStack"
+$ npm run config -- --account-id="12_DIGIT_ACCOUNT_ID" --bucket-name="UNIQUE_BUCKET_NAME" --function-name="LAMBDA_FUNCTION_NAME" --stage="staging" --stack-name="YOUR_AWS_STACK_NAME"
 ```
 OR
 ```sh
-$ npm run config -- --account-id="12_DIGIT_ACCOUNT_ID" --bucket-name="analytics.worldbrain.io" --function-name="AWSAnalytics" --stage="production" --stack-name="ProductionStack"
+$ npm run config -- --account-id="12_DIGIT_ACCOUNT_ID" --bucket-name="UNIQUE_BUCKET_NAME" --function-name="LAMBDA_FUNCTION_NAME" --stage="production" --stack-name="YOUR_AWS_STACK_NAME"
 ```
 
 The default function name and region are

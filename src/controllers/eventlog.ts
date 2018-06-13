@@ -9,6 +9,7 @@ export function eventLog(
     return async function handleEventlogPutRequest({event}) {
         await AwsEventLogStorage.storeEvents(event)
 
+        // Todo for other messages
         return {"success": true}
     }
 }

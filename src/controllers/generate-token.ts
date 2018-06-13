@@ -3,14 +3,14 @@ import { TokenGenerator } from '../components/token-generator'
 import { UserStorage } from '../components/storage/types'
 
 export function generateToken(
-    {tokenGenerator, AwsUserStorage}:
-    {tokenGenerator: TokenGenerator, AwsUserStorage: UserStorage}
+    {TokenGenerator, AwsUserStorage}:
+    {TokenGenerator: TokenGenerator, AwsUserStorage: UserStorage}
 ) {
     return async function handleGenerateTokenRequest({installTime}) {
-        let id = tokenGenerator.generateToken()
+        let id = TokenGenerator.generateToken()
 
-        while(!(await AwsUserStorage.isUserById(id))) {
-            id = tokenGenerator.generateToken()
+        while(!(await AwsUserStorage.userExists(id))) {
+            id = TokenGenerator.generateToken()
         }
 
         await AwsUserStorage.storeUser(id, installTime)

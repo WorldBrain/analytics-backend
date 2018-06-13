@@ -5,17 +5,17 @@ import { EventLog } from '../../types/eventlog'
 export class UserMemoryStorage implements UserStorage {
     public users = []
 
-    async storeUser(id:string, install_time:number) {
-        this.users.push([id, install_time])
+    async storeUser(id:string, installTime:number) {
+        this.users.push([id, installTime])
         
         return {id}
     }
 
-    async isUserById(id) {
+    async userExists(id) {
         this.users.forEach(user => {
-          if(user[0] == id)
-            return false;  
-        });
+          if(user[0] === id)
+            return false
+        })
 
         return true
     }

@@ -3,7 +3,7 @@ import { AwsUserStorage, AwsEventLogStorage } from './storage'
 import { UserStorage, EventLogStorage } from './storage'
 
 export interface AppComponents {
-    tokenGenerator: TokenGenerator,
+    TokenGenerator: TokenGenerator,
     AwsUserStorage: UserStorage,
     AwsEventLogStorage: EventLogStorage
 }
@@ -21,7 +21,7 @@ export function createAppComponents(config: AppComponentsConfig): AppComponents 
     
     
     return {
-        tokenGenerator: allowOverride('tokenGenerator', () => new TokenGenerator()),
+        TokenGenerator: allowOverride('tokenGenerator', () => new TokenGenerator()),
         AwsUserStorage: allowOverride('awsUserStorage', () => new AwsUserStorage({bucketName: config.awsBucket})),
         AwsEventLogStorage: allowOverride('AwsEventLogStorage', () => new AwsEventLogStorage({bucketName: config.awsBucket})),
     }

@@ -7,16 +7,16 @@ describe('User token generate and save in memory', () => {
     it('Generate and save the user token in memory', async () => {
         const dummyUser = {
             "id": 'newtoken-user-user-user-testtesttest',
-            install_time: 1528692542998
+            installTime: 1528692542998
         }
 
         const controller = controllers.generateToken({
-            tokenGenerator: new TokenGenerator(),
+            TokenGenerator: new TokenGenerator(),
             AwsUserStorage: new UserMemoryStorage()
         })
 
-        const result = await controller({installTime: dummyUser.install_time})
+        const result = await controller({installTime: dummyUser.installTime})
 
-        expect(result.installTime).to.be.equal(dummyUser.install_time)
+        expect(result.installTime).to.be.equal(dummyUser.installTime)
     })
 })

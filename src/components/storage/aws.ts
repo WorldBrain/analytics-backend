@@ -1,13 +1,9 @@
 import * as AWS from 'aws-sdk'
 import { UserStorage, EventLogStorage } from './types'
-import { S3 } from 'aws-sdk';
+import { S3 } from 'aws-sdk'
 import { User } from '../../types/user'
 import { EventLog } from '../../types/eventlog'
 import * as fs from 'fs'
-var stringify = require('csv-stringify');
-
-const csv = require("fast-csv");
-
 
 export interface AwsStorageConfig {
     bucketName : string
@@ -24,39 +20,37 @@ export class AwsUserStorage implements UserStorage {
         this.bucketName = bucketName
       }
 
-    async storeUser(id:string, install_time: number) {
+    async storeUser(id:string, installTime: number) {
         const key = 'users/users.csv'
 
         const users = await this._getObject({key, type: 'csv'})
-        users.push([id, install_time])
+        users.push([id, installTime])
 
-        let body;
 
-        await new Promise((resolve, reject) => {
-            stringify(users, function(err, output){
-                body = output;
-                resolve(output)
-            });
+        const body = await new Promise((resolve, reject) => {
+            require('csv-stringify')(users, function(err, output) {
+                err? reject(err): resolve(output)
+            })
         })
 
         await this._putObject({key, body, type: 'csv'})
         return {id: id}
     }
 
-    async isUserById(id) {
+    async userExists(id) {
         const key = 'users/users.csv'
         const users = await this._getObject({key, type: 'csv'})
 
         users.forEach((user) => {
-            if(user[0] == id) {
-                return false;
+            if(user[0] === id) {
+                return false
             }
         })
         
-        return true;
+        return true
     }
 
-    async _putObject({key, body, type, mime} : {key : string, body, type? : 'csv', mime? : string}) {
+    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'csv', mime? : string}) {
         const contentType = mime || {
             csv: 'text/csv',
             'image-png': 'image/png',
@@ -86,12 +80,12 @@ export class AwsUserStorage implements UserStorage {
 
         let stream = (await this._s3.getObject(params)).createReadStream()
 
-        let users = [];
+        let users = []
 
         await new Promise((resolve, reject) => {
-              csv.fromStream(stream)
+            require("fast-csv").fromStream(stream)
                 .on('data', (e) => {
-                    users.push(e);
+                    users.push(e)
                 })
                 .on('end', () => {
                     resolve(users)
@@ -122,19 +116,16 @@ export class AwsEventLogStorage implements EventLogStorage {
             allEvent.push([event.time, events.id, event.other, event.type])
         })
 
-        let body;
-
-        await new Promise((resolve, reject) => {
-            stringify(allEvent, function(err, output){
-                body = output;
+        const body = await new Promise((resolve, reject) => {
+            require('csv-stringify')(allEvent, function(err, output) {
                 resolve(output)
-            });
+            })
         })
 
         await this._putObject({key, body, type: 'csv'})
     }
 
-    async _putObject({key, body, type, mime} : {key : string, body, type? : 'csv', mime? : string}) {
+    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'csv', mime? : string}) {
         const contentType = mime || {
             csv: 'text/csv',
             'image-png': 'image/png',
@@ -164,12 +155,12 @@ export class AwsEventLogStorage implements EventLogStorage {
 
         let stream = (await this._s3.getObject(params)).createReadStream()
 
-        let events = [];
+        let events = []
 
         await new Promise((resolve, reject) => {
-            csv.fromStream(stream)
+            require("fast-csv").fromStream(stream)
             .on('data', (e) => {
-                events.push(e);
+                events.push(e)
             })
             .on('end', () => {
                 resolve(events)
