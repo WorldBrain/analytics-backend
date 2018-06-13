@@ -8,7 +8,7 @@ export class UserMemoryStorage implements UserStorage {
     async storeUser(id:string, installTime:number) {
         this.users.push([id, installTime])
         
-        return {id}
+        return {id, success: true}
     }
 
     async userExists(id) {

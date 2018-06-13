@@ -8,16 +8,13 @@ export function generateToken(
 ) {
     return async function handleGenerateTokenRequest({installTime}) {
         let id = tokenGenerator.generateToken()
-        console.log('Here1')
         while(!(await userStorage.userExists(id))) {
-            console.log('Here2')
             id = tokenGenerator.generateToken()
         }
 
-        console.log('Here3')
-
-        await userStorage.storeUser(id, installTime)
+        const user = await userStorage.storeUser(id, installTime)
         
-        return {id, installTime}
+        // Todo for other error messages        
+        return {...user, installTime: installTime}
     }
 }

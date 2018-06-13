@@ -13,6 +13,17 @@ Install all the dependencies
 $ npm install
 ```
 
+Rename .env.example to .env and change all the required things,
+
+## Run without AWS (Development setup)
+In the .env, change 
+```sh
+TIER="development"
+```
+All the users and events will be saved in the `public` folder.
+
+## Run with AWS
+
 Install the [aws-cli](https://docs.aws.amazon.com/cli/latest/userguide/installing.html) and configure `aws configure`
 
 Configure with AWS account

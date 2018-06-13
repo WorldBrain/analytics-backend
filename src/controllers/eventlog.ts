@@ -9,7 +9,7 @@ export function eventLog(
     return async function handleEventlogPutRequest({event}) {
         await eventLogStorage.storeEvents(event)
 
-        // Todo for other messages
+        // Todo for other error messages
         return {"success": true}
     }
 }

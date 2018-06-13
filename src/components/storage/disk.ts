@@ -11,30 +11,21 @@ export class UserDiskStorage implements UserStorage {
     }
 
     async storeUser(id: string, installTime: number) {
-        const isPublicDirExist = this._isDirExists('')
 
         // If the user is first user, make public directory
-        if(!isPublicDirExist) {
-            mkdirSyncIfNotExists(this.basePath)
-        }
+        mkdirSyncIfNotExists(this.basePath)
         
-        const isUserDirExists = this._isDirExists('/users')
-        if(!isUserDirExists) {
-            mkdirSyncIfNotExists(this.basePath + '/users')
-        }
+        // Make directory public/users
+        mkdirSyncIfNotExists(this.basePath + '/users')
 
         const users = await this._readFile()
         users.push([id, installTime])
 
         require('csv-stringify')(users, (err, output) => {
-            if (err) { throw err }
             fs.writeFileSync(path.join(this.basePath, 'users', 'users.csv'), output)
         })
-
-        return {
-            "id": id,
-            "installTime": installTime
-        }
+        
+        return {"id": id, success: true}
     }
 
     async userExists(id) {
@@ -72,11 +63,9 @@ export class UserDiskStorage implements UserStorage {
                     users.push(e)
                 })
                 .on('end', () => {
-                    resolve(users)
+                    resolve()
                 })
             })
-
-        console.log(users)
         
         return users
     }
@@ -95,17 +84,11 @@ export class EventDiskStorage implements EventLogStorage {
     }
 
     async storeEvents(events: any) {
-        const isPublicDirExist = this._isDirExists('')
-
         // If the user is first user, make public directory
-        if(!isPublicDirExist) {
-            mkdirSyncIfNotExists(this.basePath)
-        }
+        mkdirSyncIfNotExists(this.basePath)
         
-        const isEventDirExists = this._isDirExists('/events')
-        if(!isEventDirExists) {
-            mkdirSyncIfNotExists(this.basePath + '/events')
-        }
+        // Create directory: public/events
+        mkdirSyncIfNotExists(this.basePath + '/events')
 
         const allEvent = await this._readFile()
 
@@ -136,7 +119,7 @@ export class EventDiskStorage implements EventLogStorage {
                     events.push(e)
                 })
                 .on('end', () => {
-                    resolve(events)
+                    resolve()
                 })
             })
         

@@ -34,7 +34,7 @@ export class AwsUserStorage implements UserStorage {
         })
 
         await this._putObject({key, body, type: 'csv'})
-        return {id: id}
+        return {id: id, success: true}
     }
 
     async userExists(id) {
