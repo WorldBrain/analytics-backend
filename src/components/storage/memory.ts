@@ -28,5 +28,7 @@ export class EventLogMemoryStorage implements EventLogStorage {
         events.data.forEach((event) => {
             this.allEvents.push([event.time, events.id, event.other, event.type])
         })
+
+        return true
     }
 }

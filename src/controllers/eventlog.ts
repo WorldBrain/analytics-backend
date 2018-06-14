@@ -7,9 +7,8 @@ export function eventLog(
     {eventLogStorage: EventLogStorage}
 ) {
     return async function handleEventlogPutRequest({event}) {
-        await eventLogStorage.storeEvents(event)
+        const eventsStatus = await eventLogStorage.storeEvents(event)
 
-        // Todo for other error messages
-        return {"success": true}
+        return {"success": eventsStatus}
     }
 }

@@ -21,38 +21,25 @@ export class AwsUserStorage implements UserStorage {
       }
 
     async storeUser(id:string, installTime: number) {
-        const key = 'users/users.csv'
+        const key = 'users/' + id + '.json'
+        const body = {"id":id,"installTime":installTime}
 
-        const users = await this._getObject({key, type: 'csv'})
-        users.push([id, installTime])
-
-
-        const body = await new Promise((resolve, reject) => {
-            require('csv-stringify')(users, function(err, output) {
-                err? reject(err): resolve(output)
-            })
-        })
-
-        await this._putObject({key, body, type: 'csv'})
-        return {id: id, success: true}
+        const success = await this._putObject({key, body, type: 'json'})
+        return {id, success}
     }
 
     async userExists(id) {
-        const key = 'users/users.csv'
-        const users = await this._getObject({key, type: 'csv'})
-
-        users.forEach((user) => {
-            if(user[0] === id) {
-                return false
-            }
-        })
-        
-        return true
+        const key = 'users/' + id + '.json'
+        return await this._getObject({key, type: 'json'})        
     }
 
-    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'csv', mime? : string}) {
+    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'json', mime? : string}) {
+        if (type === 'json') {
+            body = JSON.stringify(body)
+        }
+
         const contentType = mime || {
-            csv: 'text/csv',
+            json: 'text/json',
             'image-png': 'image/png',
             'image-jpg': 'image/jpeg'
         }[type]
@@ -64,36 +51,32 @@ export class AwsUserStorage implements UserStorage {
             Bucket: this.bucketName,
             ContentType: contentType
         }
-    
-        await new Promise((resolve, reject) => {
-            this._s3.putObject(params, (err, data) => {
-                err ? reject(err) : resolve()
-            })
-        })
+
+        try {
+            const headCode = this._s3.putObject(params).promise()
+        } catch(headErr) {
+            return false
+        }
+
+        return true
     }
 
-    async _getObject({key, type} : {key : string, type? : 'csv'}) {
+    async _getObject({key, type} : {key : string, type? : 'json'}) {
         const params = {
             Bucket: this.bucketName,
             Key: key,
         }
-
-        let stream = (await this._s3.getObject(params)).createReadStream()
-
-        let users = []
-
-        await new Promise((resolve, reject) => {
-            require("fast-csv").fromStream(stream)
-                .on('data', (e) => {
-                    users.push(e)
-                })
-                .on('end', () => {
-                    resolve(users)
-                })
-            })
         
+        try {
+            const headCode = await this._s3.headObject(params).promise()
+        } catch(headErr) {
+            if(headErr.code === 'NotFound') {
+                return false
+            }
+            console.log(headErr.code)
+        }
         
-        return users
+        return true
     }
 }
 
@@ -108,24 +91,30 @@ export class AwsEventLogStorage implements EventLogStorage {
     }
 
     async storeEvents(events: any) {
-        const key = 'events/events.csv'
+        let storeEventSuccess = true
 
-        const allEvent = await this._getObject({key, type: 'csv'})
+        for(let event of events.data) {
+            const body = {
+                time: event.time,
+                id: events.id,
+                other: event.other,
+                type: event.type
+            }
 
-        events.data.forEach((event) => {
-            allEvent.push([event.time, events.id, event.other, event.type])
-        })
+            const eventId = event.time + event.type
 
-        const body = await new Promise((resolve, reject) => {
-            require('csv-stringify')(allEvent, function(err, output) {
-                resolve(output)
-            })
-        })
+            const key = 'events/' + events.id + '/' + eventId + '.json'
+            storeEventSuccess = storeEventSuccess && await this._putObject({key, body, type: 'json'})
+        }
 
-        await this._putObject({key, body, type: 'csv'})
+        return storeEventSuccess
     }
 
-    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'csv', mime? : string}) {
+    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'json', mime? : string}) {
+        if (type === 'json') {
+            body = JSON.stringify(body)
+        }
+
         const contentType = mime || {
             csv: 'text/csv',
             'image-png': 'image/png',
@@ -139,35 +128,13 @@ export class AwsEventLogStorage implements EventLogStorage {
             Bucket: this.bucketName,
             ContentType: contentType
         }
-    
-        await new Promise((resolve, reject) => {
-            this._s3.putObject(params, (err, data) => {
-                err ? reject(err) : resolve()
-            })
-        })
-    }
 
-    async _getObject({key, type} : {key : string, type? : 'csv'}) {
-        const params = {
-            Bucket: this.bucketName,
-            Key: key,
+        try {
+            const headCode = this._s3.putObject(params).promise()
+        } catch(headErr) {
+            return false
         }
 
-        let stream = (await this._s3.getObject(params)).createReadStream()
-
-        let events = []
-
-        await new Promise((resolve, reject) => {
-            require("fast-csv").fromStream(stream)
-            .on('data', (e) => {
-                events.push(e)
-            })
-            .on('end', () => {
-                resolve(events)
-            })
-        })
-        
-        
-        return events
+        return true
     }
 }

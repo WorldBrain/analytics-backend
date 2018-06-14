@@ -11,19 +11,18 @@ export class UserDiskStorage implements UserStorage {
     }
 
     async storeUser(id: string, installTime: number) {
-
         // If the user is first user, make public directory
         mkdirSyncIfNotExists(this.basePath)
         
         // Make directory public/users
         mkdirSyncIfNotExists(this.basePath + '/users')
 
-        const users = await this._readFile()
-        users.push([id, installTime])
+        const body = {
+            "id": id,
+            "installTime": installTime
+        }
 
-        require('csv-stringify')(users, (err, output) => {
-            fs.writeFileSync(path.join(this.basePath, 'users', 'users.csv'), output)
-        })
+        fs.writeFileSync(path.join(this.basePath, 'users', id + '.json'), JSON.stringify(body))
         
         return {"id": id, success: true}
     }
@@ -32,42 +31,12 @@ export class UserDiskStorage implements UserStorage {
         const isUserDirExists = this._isDirExists('/users')
 
         if(!isUserDirExists) {
-            return true
+            return false
         }
 
-        const users = await this._readFile()
+        const filePath = path.join(this.basePath, 'users', id + '.json')
 
-        users.forEach((user) => {
-            if(user[0] === id) {
-                return false
-            }
-        })
-        
-        return true
-    }
-
-    async _readFile() {
-        const filePath = path.join(this.basePath, 'users', 'users.csv')
-
-        if(!fs.existsSync(filePath)) {
-            return []
-        }
-
-        let stream = fs.createReadStream(filePath)
-
-        let users = []
-
-        await new Promise((resolve, reject) => {
-            require("fast-csv").fromStream(stream)
-                .on('data', (e) => {
-                    users.push(e)
-                })
-                .on('end', () => {
-                    resolve()
-                })
-            })
-        
-        return users
+        return fs.existsSync(filePath)
     }
 
     _isDirExists(url:string) {
@@ -90,44 +59,24 @@ export class EventDiskStorage implements EventLogStorage {
         // Create directory: public/events
         mkdirSyncIfNotExists(this.basePath + '/events')
 
-        const allEvent = await this._readFile()
+        let storeEventSuccess = true
 
-        events.data.forEach((event) => {
-            allEvent.push([event.time, events.id, event.other, event.type])
-        })
+        for(let event of events.data) {
+            const body = {
+                time: event.time,
+                id: events.id,
+                other: event.other,
+                type: event.type
+            }
 
-        require('csv-stringify')(allEvent, (err, output) => {
-            if (err) { throw err }
-            fs.writeFileSync(path.join(this.basePath, 'events', 'events.csv'), output)
-        })
-    }
+            const eventId = event.time + event.type
 
-    async _readFile() {
-        const filePath = path.join(this.basePath, 'events', 'events.csv')
+            mkdirSyncIfNotExists(this.basePath + '/events/' + String(events.id))
 
-        if(!fs.existsSync(filePath)) {
-            return []
+            const key = path.join(this.basePath, 'events',String(events.id), eventId + '.json')
+            fs.writeFileSync(key, JSON.stringify(body))
         }
 
-        let stream = fs.createReadStream(filePath)
-
-        let events = []
-
-        await new Promise((resolve, reject) => {
-            require("fast-csv").fromStream(stream)
-                .on('data', (e) => {
-                    events.push(e)
-                })
-                .on('end', () => {
-                    resolve()
-                })
-            })
-        
-        return events
-    }
-
-    _isDirExists(url:string) {
-        const dirPath = this.basePath + url
-        return fs.existsSync(dirPath)
+        return storeEventSuccess
     }
 }
