@@ -4,24 +4,43 @@ import { S3 } from 'aws-sdk'
 import { User } from '../../types/user'
 import { EventLog } from '../../types/eventlog'
 import * as fs from 'fs'
+import putObject from './put-object'
 
 export interface AwsStorageConfig {
     bucketName : string
     bucketRegion : string
-  }
+}
 
-export class AwsUserStorage implements UserStorage {
-    public _s3
-    public bucketName : string
+interface PutObjectProps {
+    key: string
+    body: any,
+    type?: 'json'   // For now we are storing only json files in the s3 bucket
+    mime?: string
+}
 
-    constructor({bucketName} : {bucketName : string}) {
+export class AwsUserStorage extends putObject implements UserStorage {
+    private _s3
+    private bucketName : string
+    private dir : string
+    private ext : string
+    private contentType : any
+
+    static DEF_DIR = 'users/'
+    static DEF_EXT = '.json'
+    static DEF_CONTENT_TYPE = {json: 'application/json'}
+
+    constructor({bucketName, dir = AwsUserStorage.DEF_DIR, ext = AwsUserStorage.DEF_EXT, contentType = AwsUserStorage.DEF_CONTENT_TYPE} : {bucketName : string, dir?: string, ext?: string, contentType?: any}) {
+        super({bucketName})
         AWS.config.update({region: process.env.AWS_REGION})
         this._s3 = new AWS.S3({apiVersion: '2006-03-01'})
         this.bucketName = bucketName
-      }
+        this.dir = dir
+        this.ext = ext
+        this.contentType = contentType
+    }
 
     async storeUser(id:string, installTime: number) {
-        const key = 'users/' + id + '.json'
+        const key = this.dir + id + this.ext
         const body = {"id":id,"installTime":installTime}
 
         const success = await this._putObject({key, body, type: 'json'})
@@ -29,71 +48,50 @@ export class AwsUserStorage implements UserStorage {
     }
 
     async userExists(id) {
-        const key = 'users/' + id + '.json'
-        return await this._getObject({key, type: 'json'})        
-    }
-
-    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'json', mime? : string}) {
-        if (type === 'json') {
-            body = JSON.stringify(body)
-        }
-
-        const contentType = mime || {
-            json: 'text/json',
-            'image-png': 'image/png',
-            'image-jpg': 'image/jpeg'
-        }[type]
-
-        const params = {
-            ACL: 'public-read',
-            Key: key,
-            Body: body,
-            Bucket: this.bucketName,
-            ContentType: contentType
-        }
-
-        try {
-            const headCode = this._s3.putObject(params).promise()
-        } catch(headErr) {
-            return false
-        }
-
-        return true
-    }
-
-    async _getObject({key, type} : {key : string, type? : 'json'}) {
-        const params = {
-            Bucket: this.bucketName,
-            Key: key,
-        }
-        
-        try {
-            const headCode = await this._s3.headObject(params).promise()
-        } catch(headErr) {
-            if(headErr.code === 'NotFound') {
-                return false
-            }
-            console.log(headErr.code)
-        }
-        
-        return true
+        const key = this.dir + id + this.ext
+        const isUserExists = _isUserExists(this._s3, this.bucketName, key);
+        return isUserExists    
     }
 }
 
-export class AwsEventLogStorage implements EventLogStorage {
-    public _s3
-    public bucketName : string
+function _isUserExists(s3, bucket, key) {
+    return s3.headObject({Bucket: bucket, Key: key}).promise()
+      .then(() => Promise.resolve(true))
+      .catch(function (err) {
+        if (err.code == 'NotFound') {
+          return Promise.resolve(false)
+        } else {
+          return Promise.reject(err)
+        }
+      })
+  }
+  
 
-    constructor({bucketName} : {bucketName : string}) {
+export class AwsEventLogStorage extends putObject implements EventLogStorage {
+    private _s3
+    private bucketName : string
+    private dir : string
+    private ext : string
+    private contentType : any
+
+    static DEF_DIR = 'events/'
+    static DEF_EXT = '.json'
+    static DEF_CONTENT_TYPE = {json: 'application/json'}
+
+    constructor({bucketName, dir = AwsEventLogStorage.DEF_DIR, ext = AwsEventLogStorage.DEF_EXT, contentType = AwsEventLogStorage.DEF_CONTENT_TYPE} : {bucketName : string, dir?: string, ext?: string, contentType?: any}) {
+        super({bucketName})
         AWS.config.update({region: process.env.AWS_REGION})
         this._s3 = new AWS.S3({apiVersion: '2006-03-01'})
         this.bucketName = bucketName
+        this.dir = dir
+        this.ext = ext
+        this.contentType = contentType
     }
 
     async storeEvents(events: any) {
         let storeEventSuccess = true
 
-        for(let event of events.data) {
+        for(const event of events.data) {
             const body = {
                 time: event.time,
                 id: events.id,
@@ -101,40 +99,12 @@ export class AwsEventLogStorage implements EventLogStorage {
                 type: event.type
             }
 
-            const eventId = event.time + event.type
+            const eventId = event.time + '-' + event.type
 
-            const key = 'events/' + events.id + '/' + eventId + '.json'
+            const key = this.dir + events.id + '/' + eventId + this.ext
             storeEventSuccess = storeEventSuccess && await this._putObject({key, body, type: 'json'})
         }
 
         return storeEventSuccess
-    }
-
-    async _putObject({key, body, type, mime} : {key : string, body: any, type? : 'json', mime? : string}) {
-        if (type === 'json') {
-            body = JSON.stringify(body)
-        }
-
-        const contentType = mime || {
-            csv: 'text/csv',
-            'image-png': 'image/png',
-            'image-jpg': 'image/jpeg'
-        }[type]
-
-        const params = {
-            ACL: 'public-read',
-            Key: key,
-            Body: body,
-            Bucket: this.bucketName,
-            ContentType: contentType
-        }
-
-        try {
-            const headCode = this._s3.putObject(params).promise()
-        } catch(headErr) {
-            return false
-        }
-
-        return true
     }
 }

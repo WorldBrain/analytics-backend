@@ -69,7 +69,7 @@ export class EventDiskStorage implements EventLogStorage {
                 type: event.type
             }
 
-            const eventId = event.time + event.type
+            const eventId = event.time + '-' + event.type
 
             mkdirSyncIfNotExists(this.basePath + '/events/' + String(events.id))
 

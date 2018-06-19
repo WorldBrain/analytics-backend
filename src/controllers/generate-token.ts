@@ -12,9 +12,16 @@ export function generateToken(
             id = tokenGenerator.generateToken()
         }
 
-        const user = await userStorage.storeUser(id, installTime)
+        let user
+        try {
+            user = await userStorage.storeUser(id, installTime)
+        } catch(err) {
+            return {
+                "success": false,
+                "message": err,
+            }
+        }
         
-        // Todo for other error messages        
         return {...user, installTime: installTime}
     }
 }
