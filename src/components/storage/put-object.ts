@@ -17,7 +17,7 @@ export default class putObject {
         this._bucketName = bucketName
     }
 
-    async _putObject({key, body, type, mime} : PutObjectProps) {
+    protected async _putObject({key, body, type, mime} : PutObjectProps) {
         if (type === 'json') {
             body = JSON.stringify(body)
         }
@@ -41,9 +41,5 @@ export default class putObject {
         })
     
         return true
-    }
-
-    hello() {
-        console.log('Hello')
     }
 }
