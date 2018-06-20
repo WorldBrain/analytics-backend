@@ -15,7 +15,13 @@ export function uninstall(appControllers: AppControllers) {
             }]
         }
 
-        const result = await appControllers.eventLog({event})
+        let result
+        try {
+            result = await appControllers.eventLog({event})
+        } catch(err) {
+            res.json({success: false, message: err})
+        }
+        
         res.redirect('https://example.com/')
       }
 }

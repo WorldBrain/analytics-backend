@@ -5,7 +5,13 @@ export function eventLog(appControllers: AppControllers) {
     return async function handleEventlogPutRequest({req, res} : ExpressReqRes) {        
         let event = _extractDataFromPostRequest(req)
 
-        const result = await appControllers.eventLog({event})
+        let result
+        try {
+            result = await appControllers.eventLog({event})
+        } catch(err) {
+            res.json({success: false, message: err})
+        }
+        
         res.json({success: true})
       }
 }

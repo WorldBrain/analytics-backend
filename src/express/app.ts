@@ -33,6 +33,13 @@ export default function createApp(
 	app.post('/user-token', route(routes.generateToken))
 	app.post('/event', route(routes.eventLog))
 	app.get('/uninstall', route(routes.uninstall))
+
+	app.use(function (err, req, res, next) {
+		res.status(500).json({
+			"status": false,
+			message: err,
+		})
+	})
 	
 	return app
 }

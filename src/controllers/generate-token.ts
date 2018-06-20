@@ -13,15 +13,7 @@ export function generateToken(
             id = tokenGenerator.generateToken()
         }
 
-        let user
-        try {
-            user = await userStorage.storeUser(id, installTime)
-        } catch(err) {
-            return {
-                "success": false,
-                "message": err,
-            }
-        }
+        const user = await userStorage.storeUser(id, installTime)
         
         return {...user, installTime: installTime}
     }

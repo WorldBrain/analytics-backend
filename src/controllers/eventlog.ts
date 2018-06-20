@@ -7,17 +7,8 @@ export function eventLog(
     {eventLogStorage: EventLogStorage}
 ) {
     return async function handleEventlogPutRequest({event}) {
-        let eventsStatus
-
-        try {
-            eventsStatus = await eventLogStorage.storeEvents(event)
-        } catch(err) {
-            return {
-                "success": false,
-                "message": err,
-            }
-        }
-
+        const eventsStatus = await eventLogStorage.storeEvents(event)
+        
         return {"success": eventsStatus}
     }
 }
