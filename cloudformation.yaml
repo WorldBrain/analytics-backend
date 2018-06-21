@@ -32,7 +32,13 @@ Resources:
             - logs:CreateLogGroup
             - logs:CreateLogStream
             - logs:PutLogEvents
+            - logs:DescribeLogStreams
             Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - s3:Get*
+            - s3:Put*
+            Resource: arn:aws:s3:::YOUR_UNIQUE_BUCKET_NAME/*
 
   LambdaApiGatewayExecutionPermission:
     Type: AWS::Lambda::Permission

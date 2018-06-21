@@ -15,6 +15,6 @@ export function generateToken(
 
         const user = await userStorage.storeUser(id, installTime)
         
-        return {...user, installTime: installTime}
+        return {...user, installTime}
     }
 }

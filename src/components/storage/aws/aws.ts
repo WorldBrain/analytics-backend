@@ -43,7 +43,7 @@ export class AwsUserStorage implements UserStorage {
         const body = { id, installTime }
 
         const success = putObject({s3: this._s3, bucketName: this.bucketName, key, body, type: 'json'})
-        return {id, success}
+        return {id, success: true}
     }
 
     async userExists(id) {

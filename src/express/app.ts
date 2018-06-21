@@ -26,7 +26,7 @@ export default function createApp(
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(awsServerlessExpressMiddleware.eventContext())
 
-	app.get('/', function(req, res) {
+	app.get('/', function(req, res, next) {
 		res.send('Hello, welcome to worldbrains analytics. The work is in progress.')
 	})
 
