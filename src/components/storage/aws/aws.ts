@@ -1,8 +1,8 @@
 import * as AWS from 'aws-sdk'
-import { UserStorage, EventLogStorage } from './types'
+import { UserStorage, EventLogStorage } from '../types'
 import { S3 } from 'aws-sdk'
-import { User } from '../../types/user'
-import { EventLog } from '../../types/eventlog'
+import { User } from '../../../types/user'
+import { EventLog } from '../../../types/eventlog'
 import * as fs from 'fs'
 import putObject from './put-object'
 
@@ -18,7 +18,7 @@ interface PutObjectProps {
     mime?: string
 }
 
-export class AwsUserStorage extends putObject implements UserStorage {
+export class AwsUserStorage implements UserStorage {
     private _s3
     private bucketName : string
     private dir : string
@@ -30,7 +30,6 @@ export class AwsUserStorage extends putObject implements UserStorage {
     static DEF_CONTENT_TYPE = {json: 'application/json'}
 
     constructor({bucketName, dir = AwsUserStorage.DEF_DIR, ext = AwsUserStorage.DEF_EXT, contentType = AwsUserStorage.DEF_CONTENT_TYPE} : {bucketName : string, dir?: string, ext?: string, contentType?: any}) {
-        super({bucketName})
         AWS.config.update({region: process.env.AWS_REGION})
         this._s3 = new AWS.S3({apiVersion: '2006-03-01'})
         this.bucketName = bucketName
@@ -41,9 +40,9 @@ export class AwsUserStorage extends putObject implements UserStorage {
 
     async storeUser(id:string, installTime: number) {
         const key = this.dir + id + this.ext
-        const body = {"id":id,"installTime":installTime}
+        const body = { id, installTime }
 
-        const success = await this._putObject({key, body, type: 'json'})
+        const success = putObject({s3: this._s3, bucketName: this.bucketName, key, body, type: 'json'})
         return {id, success}
     }
 
@@ -67,7 +66,7 @@ function _isUserExists(s3, bucket, key) {
   }
   
 
-export class AwsEventLogStorage extends putObject implements EventLogStorage {
+export class AwsEventLogStorage implements EventLogStorage {
     private _s3
     private bucketName : string
     private dir : string
@@ -79,7 +78,6 @@ export class AwsEventLogStorage extends putObject implements EventLogStorage {
     static DEF_CONTENT_TYPE = {json: 'application/json'}
 
     constructor({bucketName, dir = AwsEventLogStorage.DEF_DIR, ext = AwsEventLogStorage.DEF_EXT, contentType = AwsEventLogStorage.DEF_CONTENT_TYPE} : {bucketName : string, dir?: string, ext?: string, contentType?: any}) {
-        super({bucketName})
         AWS.config.update({region: process.env.AWS_REGION})
         this._s3 = new AWS.S3({apiVersion: '2006-03-01'})
         this.bucketName = bucketName
@@ -95,14 +93,14 @@ export class AwsEventLogStorage extends putObject implements EventLogStorage {
             const body = {
                 time: event.time,
                 id: events.id,
-                other: event.other,
+                details: event.details,
                 type: event.type
             }
 
             const eventId = event.time + '-' + event.type
 
             const key = this.dir + events.id + '/' + eventId + this.ext
-            storeEventSuccess = storeEventSuccess && await this._putObject({key, body, type: 'json'})
+            storeEventSuccess = storeEventSuccess && putObject({s3: this._s3, bucketName: this.bucketName, key, body, type: 'json'})
         }
 
         return storeEventSuccess

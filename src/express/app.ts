@@ -35,10 +35,7 @@ export default function createApp(
 	app.get('/uninstall', route(routes.uninstall))
 
 	app.use(function (err, req, res, next) {
-		res.status(500).json({
-			"status": false,
-			message: err,
-		})
+		res.json({success: false, message: err.message})
 	})
 	
 	return app
