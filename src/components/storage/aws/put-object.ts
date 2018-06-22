@@ -7,7 +7,7 @@ interface PutObjectProps {
     mime?: string
 }
 
-export default function _putObject({s3, bucketName,  key, body, type, mime} : PutObjectProps) {
+export default async function _putObject({s3, bucketName,  key, body, type, mime} : PutObjectProps) {
     if (type === 'json') {
         body = JSON.stringify(body)
     }
@@ -25,7 +25,7 @@ export default function _putObject({s3, bucketName,  key, body, type, mime} : Pu
     }
 
     return s3.putObject(params).promise()
-      .then(() => Promise.resolve())
+      .then(() => Promise.resolve(true))
       .catch(function (err) {
           return Promise.reject(err)
       })

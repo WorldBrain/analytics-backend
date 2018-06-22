@@ -42,8 +42,8 @@ export class AwsUserStorage implements UserStorage {
         const key = this.dir + id + this.ext
         const body = { id, installTime }
 
-        const success = putObject({s3: this._s3, bucketName: this.bucketName, key, body, type: 'json'})
-        return {id, success: true}
+        const success = await putObject({s3: this._s3, bucketName: this.bucketName, key, body, type: 'json'})
+        return {id, success}
     }
 
     async userExists(id) {
@@ -57,7 +57,7 @@ function _isUserExists(s3, bucket, key) {
     return s3.headObject({Bucket: bucket, Key: key}).promise()
       .then(() => Promise.resolve(true))
       .catch(function (err) {
-        if (err.code == 'NotFound') {
+        if (err.code == 'NotFound' || err.code == 'Forbidden') {
           return Promise.resolve(false)
         } else {
           return Promise.reject(err)
@@ -100,7 +100,7 @@ export class AwsEventLogStorage implements EventLogStorage {
             const eventId = event.time + '-' + event.type
 
             const key = this.dir + events.id + '/' + eventId + this.ext
-            storeEventSuccess = storeEventSuccess && putObject({s3: this._s3, bucketName: this.bucketName, key, body, type: 'json'})
+            storeEventSuccess = storeEventSuccess && await putObject({s3: this._s3, bucketName: this.bucketName, key, body, type: 'json'})
         }
 
         return storeEventSuccess
