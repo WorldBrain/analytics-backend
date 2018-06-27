@@ -3,16 +3,13 @@ import { AppControllers } from '../../controllers'
 
 export function uninstall(appControllers: AppControllers) {
     return async function handleUninstallRequest({req, res} : ExpressReqRes) {
-        let uninstallTime = _extractUninstallFromRequest(req)
         const id = _extractIdFromRequest(req)
 
         if(!id) {
             res.json({success: false, message: 'Id is not provided'})
         }
 
-        if(!uninstallTime) {
-            uninstallTime = Date.now()
-        }
+        const uninstallTime = Date.now()
 
         const event = {
             id: id,
@@ -32,10 +29,6 @@ export function uninstall(appControllers: AppControllers) {
         
         res.redirect('http://worldbrain.io/uninstall')
       }
-}
-
-function _extractUninstallFromRequest(req) : number {
-    return req.param('uninstallTime')
 }
 
 function _extractIdFromRequest(req) : string {
