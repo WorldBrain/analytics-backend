@@ -5,6 +5,10 @@ export function eventLog(appControllers: AppControllers) {
     return async function handleEventlogPutRequest({req, res} : ExpressReqRes) {        
         let event = _extractDataFromPostRequest(req)
 
+        if(!event["id"]) {
+            res.json({success: false, message: "id is not present with events"})
+        }
+
         let result
         try {
             result = await appControllers.eventLog({event})

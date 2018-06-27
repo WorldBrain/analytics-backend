@@ -13,6 +13,18 @@ export function generateToken(appControllers: AppControllers) {
 
         try {
             result = await appControllers.generateToken({installTime})
+
+            // Add install event when we generate the user id
+            const installEvent = {
+                id: result.id,
+                data: [{
+                    type: 'install',
+                    details: {},
+                    time: installTime
+                }]
+            }
+
+            await appControllers.eventLog({event: installEvent})
         } catch(err) {
             res.json({message: err, success: false})
         }

@@ -18,7 +18,7 @@ export function uninstall(appControllers: AppControllers) {
             id: id,
             data: [{
                 type: 'uninstall',
-                other: [],
+                details: {},
                 time: uninstallTime
             }]
         }
@@ -30,7 +30,7 @@ export function uninstall(appControllers: AppControllers) {
             res.json({success: false, message: err})
         }
         
-        res.redirect('https://example.com/')
+        res.redirect('http://worldbrain.io/uninstall')
       }
 }
 
