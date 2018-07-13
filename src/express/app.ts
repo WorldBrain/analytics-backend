@@ -30,9 +30,18 @@ export default function createApp(
 		res.send('Hello, welcome to worldbrains analytics. The work is in progress.')
 	})
 
-	app.post('/user-token', route(routes.generateToken))
-	app.post('/event', route(routes.eventLog))
-	app.get('/uninstall', route(routes.uninstall))
+	const isDNTEnabled = function (req, res, next) {
+		// if do not track header is 1, it means no track and return response
+		if(req.headers.dnt) {
+			return res.json({success: false, message: 'Do not track is enabled'})
+		} else {
+			next()
+		}
+	}
+
+	app.post('/user-token', isDNTEnabled, route(routes.generateToken))
+	app.post('/event', isDNTEnabled, route(routes.eventLog))
+	app.get('/uninstall', isDNTEnabled, route(routes.uninstall))
 
 	app.use(function (err, req, res, next) {
 		res.json({success: false, message: err.message})
