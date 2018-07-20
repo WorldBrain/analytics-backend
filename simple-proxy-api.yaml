@@ -16,6 +16,7 @@ paths:
           schema:
             $ref: "#/definitions/Empty"
       x-amazon-apigateway-integration:
+        contentHandling: CONVERT_TO_TEXT
         responses:
           default:
             statusCode: 200
@@ -41,6 +42,7 @@ paths:
             Access-Control-Allow-Headers:
               type: string
       x-amazon-apigateway-integration:
+        contentHandling: CONVERT_TO_TEXT
         responses:
           default:
             statusCode: 200
@@ -63,6 +65,7 @@ paths:
         type: string
       responses: {}
       x-amazon-apigateway-integration:
+        contentHandling: CONVERT_TO_TEXT
         uri: arn:aws:apigateway:YOUR_AWS_REGION:lambda:path/2015-03-31/functions/arn:aws:lambda:YOUR_AWS_REGION:YOUR_ACCOUNT_ID:function:${stageVariables.ServerlessExpressLambdaFunctionName}/invocations
         httpMethod: POST
         type: aws_proxy
@@ -84,6 +87,7 @@ paths:
             Access-Control-Allow-Headers:
               type: string
       x-amazon-apigateway-integration:
+        contentHandling: CONVERT_TO_TEXT
         responses:
           default:
             statusCode: 200
