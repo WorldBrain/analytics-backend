@@ -88,11 +88,11 @@ export class AwsEventLogStorage implements EventLogStorage {
 
     async storeEvents(events: any) {
         const key = 'users/' + events.id + this.ext
-        const isUserExists = await _isUserExists(this._s3, this.bucketName, key)
+        // const isUserExists = await _isUserExists(this._s3, this.bucketName, key)
 
-        if(!isUserExists) {
-            throw new Error('Fraud user')
-        }
+        // if(!isUserExists) {
+        //     throw new Error('Fraud user')
+        // }
 
         let storeEventSuccess = true
 
