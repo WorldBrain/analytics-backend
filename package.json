@@ -57,6 +57,7 @@
     "chai": "^4.1.2",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
+    "countly-sdk-nodejs": "^19.2.0",
     "csv-stringify": "^3.0.0",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",

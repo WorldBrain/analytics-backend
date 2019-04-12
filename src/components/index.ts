@@ -2,6 +2,7 @@ import * as path from 'path'
 import { TokenGenerator } from './token-generator'
 import { AwsUserStorage, AwsEventLogStorage } from './storage'
 import { UserStorage, EventLogStorage, UserDiskStorage, EventDiskStorage } from './storage'
+import { CountlyEventLogStorage } from './storage/countly';
 
 export interface AppComponents {
     tokenGenerator: TokenGenerator,
@@ -10,6 +11,8 @@ export interface AppComponents {
 }
 export interface AppComponentsConfig {
     baseUrl : string
+    countlyUrl? : string
+    countlyAppKey? : string
     awsBucket? : string
     overrides? : object
 }
@@ -33,7 +36,9 @@ export function createAppComponents(config: AppComponentsConfig): AppComponents 
             }
         }),
         eventLogStorage: allowOverride('eventLogStorage', () => {
-            if(config.awsBucket) {
+            if (config.countlyUrl && config.countlyAppKey) {
+                return new CountlyEventLogStorage({ countlyUrl: config.countlyUrl, countlyAppKey: config.countlyAppKey })
+            } else if(config.awsBucket) {
                 return new AwsEventLogStorage({bucketName: config.awsBucket})
             } else {
                 return new EventDiskStorage({

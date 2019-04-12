@@ -12,10 +12,7 @@ let expressapp
 async function main(config = null) : Promise<any> {
     const settings = getSettings()
 
-    const components = createAppComponents({ 
-        baseUrl: settings.baseUrl,
-        awsBucket: settings.awsBucket
-    })
+    const components = createAppComponents(settings)
 
     const controllers = createAppControllers(components)
     const routes = createAppRoutes(controllers)

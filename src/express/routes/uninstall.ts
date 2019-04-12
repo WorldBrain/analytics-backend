@@ -32,5 +32,5 @@ export function uninstall(appControllers: AppControllers) {
 }
 
 function _extractIdFromRequest(req) : string {
-    return req.param('user')
+    return req.query['user']
 }

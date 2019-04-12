@@ -15,5 +15,12 @@ export function getSettings() {
     const tier = getDeploymentTier()
     const awsBucket = getAwsBucketName({tier})
     const baseUrl = getBaseUrl({tier, awsBucket})
-    return { tier, awsBucket, baseUrl }
+
+    return {
+        tier,
+        awsBucket,
+        baseUrl,
+        countlyUrl: process.env.COUNTLY_URL,
+        countlyAppKey: process.env.COUNTLY_APP_KEY,
+    }
 }
