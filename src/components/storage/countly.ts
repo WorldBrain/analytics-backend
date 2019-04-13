@@ -22,7 +22,6 @@ export class CountlyEventLogStorage implements EventLogStorage {
             key: 'uninstall',
             segmentation: {
                 userId,
-                time
             }
         })
 
